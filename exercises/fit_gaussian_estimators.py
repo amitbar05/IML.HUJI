@@ -12,19 +12,27 @@ def test_univariate_gaussian():
     real_variance = 1
     samples = np.random.normal(real_expectation, real_variance, num_samples)
     sample_mean_estimator = np.mean(samples)
-    sample_variance_estimator = np.var(samples)
+    sample_variance_estimator = np.var(samples, ddof=1)
     print(sample_mean_estimator, sample_variance_estimator)
 
     # Question 2 - Empirically showing sample mean is consistent
     step_increase = 10
-    mean_data = []
+    sample_size_data = []
+    mean_diff_data = []
     for step_number in range(1, int(num_samples / step_increase) + 1):
         temp_sample_size = step_number * 10
         temp_sample = samples[:temp_sample_size]
-        temp_sample_mean = np.mean(samples)
-        # sample_variance_estimator = np.var(samples)
-        mean_data.append((temp_sample_size, temp_sample_mean))
-        # need to plot the data
+        sample_size_data.append(temp_sample_size)
+        mean_diff_data.append(abs(np.mean(temp_sample) - real_expectation))
+    # need to plot the data
+
+    layout = go.Layout(title=r"$\text{Absolute Difference Between the Estimation of the Expectation and the Real Expectation}$",
+                               xaxis_title="$m\\text{ - number of samples}$",
+                               yaxis_title=r"$\epsilon\text{ - estimation error}$",
+                               height=600)
+    fig = go.Figure(layout=layout)
+    fig.add_trace(go.Scatter(x=sample_size_data, y=mean_diff_data, fill='tonexty', mode='lines', marker=dict(color="blue"), showlegend=False))
+    fig.show()
     raise NotImplementedError()
 
     # Question 3 - Plotting Empirical PDF of fitted model
